@@ -85,6 +85,29 @@ def search_animation():
     time.sleep(0.3)
     sys.stdout.write('\r                                 \n')
 
+def load_animation():#Animacion de carga de archivos
+    sys.stdout.write('\rCargando')
+    time.sleep(0.3)
+    sys.stdout.write('\rCargando.')
+    time.sleep(0.3)
+    sys.stdout.write('\rCargando..')
+    time.sleep(0.3)
+    sys.stdout.write('\rCargando...')
+    time.sleep(0.3)
+    sys.stdout.write('\rCargando....')
+    time.sleep(0.3)
+    sys.stdout.write('\rCargando    ')
+    time.sleep(0.3)
+    sys.stdout.write('\rCargando.   ')
+    time.sleep(0.3)
+    sys.stdout.write('\rCargando..'  )
+    time.sleep(0.3)
+    sys.stdout.write('\rCargando... ')
+    time.sleep(0.3)
+    sys.stdout.write('\rCargando....')
+    time.sleep(0.2)
+    sys.stdout.write(GREEN + '\r¡Carga De Información Completada!\n' + BLACK)
+
 def mostrar_reservaciones(fecha_consulta):
     prueba_lista =[]
     for clave,valores in reservaciones.items():
@@ -111,8 +134,32 @@ file_salas = "Salas.csv"
 file_reservaciones = "Reservaciones.csv"
 
 
-if (os.path.exists(file_clientes) and os.path.exists(file_salas) and os.path.exists(file_reservaciones)):
-    print("")
+if (os.path.exists(file_clientes) and os.path.exists(file_salas)):
+    os.system('clear')#LIMPIEZA DE PANTALLA
+    #RECUPERACION DE DATOS DE ARCHIVO CSV DE CLIENTES
+    with open('Clientes.csv', mode='r') as file_clientes:
+        reader = csv.reader(file_clientes)
+        next(reader, None)
+        writer = csv.writer(file_clientes)
+        clientes = {int(rows[0]):rows[1] for rows in reader}
+
+    #RECUPERACION DE DATOS DE ARCHIVO CSV DE SALAS
+    with open('Salas.csv', mode='r') as file_salas:
+        reader = csv.reader(file_salas)
+        next(reader, None)
+        writer = csv.writer(file_salas)
+        salas = {int(rows[0]):rows[2] for rows in reader}
+
+    #RECUPERACION DE DATOS DE ARCHIVO CSV DE RESERVACIONES
+    with open('Reservaciones.csv', mode='r') as file_reservaciones:
+        reader = csv.reader(file_reservaciones)
+        next(reader, None)
+        writer = csv.writer(file_reservaciones)
+        for rows in reader:
+            reservaciones[int(rows[0])] = [(rows[1],rows[2]),int(rows[3]),int(rows[4]),rows[5]]
+    print(reservaciones)
+    print("Se Encontro Informacion Previa ")
+    load_animation()
 else:
     os.system('clear')
     print("Esta Es La Primera Ejecucion del Programa.")
@@ -134,7 +181,28 @@ while True:
 
     if option_menu == "5":
         os.system('clear')
+
         #CREACION DE ARCHIVO CSV PARA CLIENTES
+        with open('Clientes.csv', 'w') as file_clientes:
+            writer = csv.writer(file_clientes)
+            writer.writerow(["ID CLIENTE","NOMBRE"])
+            for clave,valor in clientes.items():
+                writer.writerow([clave, valor])
+
+        #CREACION DE ARCHIVO CSV PARA SALAS
+        with open('Salas.csv', 'w') as file_salas:
+            writer = csv.writer(file_salas)
+            writer.writerow(["ID SALA","NOMBRE DE SALA","CUPO"])
+            for clave,valor in salas.items():
+                writer.writerow([clave, valor[0],valor[1]])
+
+        #CREACION DE ARCHIVO CSV PARA RESERVACIONES
+        with open('Reservaciones.csv', 'w') as file_reservaciones:
+            writer = csv.writer(file_reservaciones)
+            writer.writerow(["Folio Reservacion","Fecha Reservacion","Turno","ID Sala","ID Cliente","Nombre Del Evento"])
+            for clave,valor in reservaciones.items():
+                writer.writerow([clave, valor[0][0],valor[0][1],valor[1],valor[2],valor[3]])
+
         exit_animation()
         break
 
@@ -475,6 +543,7 @@ while True:
                     salas[id_sala]= [nombre_sala,cupo_sala]
                     print("Nombre De La Sala: "+ GREEN , nombre_sala)
                     print(BLACK +"Id Sala: "+ GREEN , id_sala)
+                    print(BLACK +"Cupo: "+ GREEN , cupo_sala)
                     break
             break
 
